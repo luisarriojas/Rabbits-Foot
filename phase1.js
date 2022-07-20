@@ -1,5 +1,7 @@
 const https = require("https");
+const cheerio = require('cheerio');
 
+//obtener link de la DB.
 let options = new URL('https://www.romspedia.com/roms/super-nintendo');
 
 let req = https.request(options, function(res) {
@@ -11,7 +13,10 @@ let req = https.request(options, function(res) {
     });
 
     res.on("end", function () {
-        console.log(content);
+        const $ = cheerio.load(content);
+        $('div.roms-img a').get().forEach((link) => {
+            console.log(link.attribs.href);
+        });
     });
 });
 req.end();
