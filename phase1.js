@@ -1,46 +1,50 @@
 const https = require("https");
 const cheerio = require('cheerio');
 const {MongoClient} = require('mongodb');
+const { isPromise } = require("util/types");
 
 async function main() {
     console.clear();
+    
     const uri = "mongodb://localhost:27017";
-    new MongoClient(uri).connect()
-        .then(mongoClient => getHtml(mongoClient))
-        .catch(e => console.log(e));
+    let mongoClient = new MongoClient(uri);
+    await mongoClient.connect();
+    await getHtml(mongoClient);
+    await mongoClient.close(); 
 }
 
-function getHtml(mongoClient) {
-    //get link from DB.
-    let options = new URL('https://www.romspedia.com/roms/super-nintendo');
+async function getHtml(mongoClient) {
+    return new Promise((resolve)=> {
+        //get link from DB.
+        let options = new URL('https://www.romspedia.com/roms/super-nintendo');
 
-    let req = https.request(options, (res) => {
-        let content = "";
-    
-        res.setEncoding("utf8");
-        res.on("data", (chunk) => {
-            content += chunk;
-        });
+        let request = https.request(options, (response) => {
+            let content = "";
 
-        res.on("end", async () => {
-            const collection = mongoClient.db('rabbits-foot').collection('phase1');
-            const $ = cheerio.load(content);
-            const linkList = [];
-            $('div.roms-img a').get().forEach((link) => {
-                linkList.push({
-                    url: link.attribs.href
-                });
+            response.setEncoding("utf8");
+            response.on("data", (chunk) => {
+                content += chunk;
             });
 
-            if (linkList.length > 0) {
-                await collection.insertMany(linkList);
-            }
+            response.on("end", async () => {
+                const collection = mongoClient.db('rabbits-foot').collection('phase1');
+                const $ = cheerio.load(content);
+                
+                const promiseList = [];
+                $('div.roms-img a').get().forEach((link) => {
+                    promiseList.push(collection.insertOne({
+                        url: link.attribs.href
+                    }));
+                });
 
-            await mongoClient.close(); 
+                Promise.all(promiseList).then(() => {
+                    resolve();
+                });
+            });
         });
-    });
 
-    req.end();
+        request.end();
+    });
 };
 
 main();
