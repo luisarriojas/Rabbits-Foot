@@ -16,7 +16,7 @@ async function main() {
 async function getHtml(mongoClient) {
     return new Promise((resolve)=> {
         //get link from DB.
-        let options = new URL('https://www.romspedia.com/roms/super-nintendo');
+        let options = new URL('https://www.romspedia.com/roms/super-nintendo123');
 
         let request = https.request(options, (response) => {
             let content = "";
