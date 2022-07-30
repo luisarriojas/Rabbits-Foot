@@ -26,7 +26,7 @@ async function getHtml(mongoClient) {
             });
 
             response.on("end", async () => {
-                const collection = mongoClient.db('rabbits-foot').collection('phase1');
+                const collection = mongoClient.db('aladdin').collection('phase1');
                 const $ = cheerio.load(content);
                 
                 const linkList = [];

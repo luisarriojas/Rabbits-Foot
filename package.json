@@ -1,5 +1,5 @@
 {
-  "name": "rabbits-foot",
+  "name": "aladdin",
   "version": "1.0.0",
   "description": "",
   "scripts": {
@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/luisarriojas/rabbits-foot.git"
+    "url": "git+https://github.com/luisarriojas/aladdin.git"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/luisarriojas/rabbits-foot/issues"
+    "url": "https://github.com/luisarriojas/aladdin/issues"
   },
-  "homepage": "https://github.com/luisarriojas/rabbits-foot#readme",
+  "homepage": "https://github.com/luisarriojas/aladdin#readme",
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
     "mongodb": "^4.8.0"
