@@ -8,8 +8,28 @@ async function main() {
     const uri = "mongodb://localhost:27017";
     let mongoClient = new MongoClient(uri);
     await mongoClient.connect();
-    await getHtml(mongoClient);
+    const db = mongoClient.db('aladdin');
+    await genie(db);
     await mongoClient.close(); 
+}
+
+async function genie(db) {
+    return new Promise((resolve)=> {
+        const vgConsole = db.collection('video-game-console');
+
+        vgConsole.findOne({}).then((device) => {
+            if (device === null) {
+                console.log(device);
+                resolve();
+            } else {
+                console.log(device);
+                vgConsole.deleteOne({_id: device._id}).then(async () => {
+                    await genie(db);
+                    resolve();
+                });
+            }
+        });
+    });
 }
 
 async function getHtml(mongoClient) {
