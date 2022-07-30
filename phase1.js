@@ -41,6 +41,8 @@ async function getHtml(mongoClient) {
                         .then(() => {
                             resolve();
                         })
+                } else {
+                    resolve();
                 }
             });
         });
