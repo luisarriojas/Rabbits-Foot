@@ -1,7 +1,6 @@
-const https = require("https");
+const https = require('https');
 const cheerio = require('cheerio');
 const {MongoClient} = require('mongodb');
-const { isPromise } = require("util/types");
 
 async function main() {
     console.clear();
@@ -16,7 +15,7 @@ async function main() {
 async function getHtml(mongoClient) {
     return new Promise((resolve)=> {
         //get link from DB.
-        let options = new URL('https://www.romspedia.com/roms/super-nintendo123');
+        let options = new URL('https://www.romspedia.com/roms/super-nintendo');
 
         let request = https.request(options, (response) => {
             let content = "";
@@ -30,16 +29,19 @@ async function getHtml(mongoClient) {
                 const collection = mongoClient.db('rabbits-foot').collection('phase1');
                 const $ = cheerio.load(content);
                 
-                const promiseList = [];
-                $('div.roms-img a').get().forEach((link) => {
-                    promiseList.push(collection.insertOne({
+                const linkList = [];
+                $('div.roms-img a').get().forEach((link, index) => {
+                    linkList.push({
                         url: link.attribs.href
-                    }));
+                    });
                 });
 
-                Promise.all(promiseList).then(() => {
-                    resolve();
-                });
+                if (linkList.length > 0) {
+                    collection.insertMany(linkList)
+                        .then(() => {
+                            resolve();
+                        })
+                }
             });
         });
 
