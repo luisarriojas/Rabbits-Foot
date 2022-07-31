@@ -1,15 +1,19 @@
-const https = require('https');
-const cheerio = require('cheerio');
-const {MongoClient} = require('mongodb');
+import https from 'https';
+import cheerio from 'cheerio';
+import { MongoClient } from 'mongodb';
+import chalk from 'chalk';
 
 async function main() {
     console.clear();
     
-    const uri = "mongodb://localhost:27017";
-    let mongoClient = new MongoClient(uri);
+    const mongoClient = new MongoClient('mongodb://localhost:27017');
     await mongoClient.connect();
     const db = mongoClient.db('aladdin');
+
+    console.log(chalk.bold.bgWhite.blue('🧞 Genie is here. Lets work!'));
     await genie(db);
+
+    console.log(chalk.bold.bgWhite.blue('🪔 Genie came back to his lamp! Work finished'));
     await mongoClient.close(); 
 }
 
@@ -19,7 +23,7 @@ async function genie(db) {
 
         vgConsole.findOne({}).then((device) => {
             if (device === null) {
-                console.log(device);
+                
                 resolve();
             } else {
                 console.log(device);
